@@ -1,4 +1,6 @@
-package org.mini.spring.io;
+package org.mini.spring.io.factory;
+
+import org.mini.spring.io.BeansException;
 
 import java.util.Map;
 import java.util.Objects;
@@ -13,11 +15,11 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author pp
  * @since 2023/5/15
  */
-public class BeanFactory {
+public interface BeanFactory {
 
     /**
      * 定义bean的缓存数据
-     */
+     *//*
     private Map<String, BeanDefinition> beanDefinitionMap
             = new ConcurrentHashMap<>();
 
@@ -31,6 +33,14 @@ public class BeanFactory {
 
     public void registerBean(String name, BeanDefinition beanDefinition){
         beanDefinitionMap.putIfAbsent(name, beanDefinition);
-    }
+    }*/
+
+    /**
+     * 获取Bean
+     * @param name
+     * @return
+     */
+    Object getBean(String name) throws BeansException;
+
 
 }
