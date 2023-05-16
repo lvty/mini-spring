@@ -3,7 +3,9 @@ package org.mini.spring.io;
 import org.junit.Test;
 import org.mini.spring.io.factory.BeanFactory;
 import org.mini.spring.io.factory.config.BeanDefinition;
+import org.mini.spring.io.factory.config.BeanReference;
 import org.mini.spring.io.factory.support.DefaultListableBeanFactory;
+import org.mini.spring.io.service.UserDao;
 import org.mini.spring.io.service.UserService;
 
 /**
@@ -81,6 +83,35 @@ public class BeanFactoryTest {
         }
 
         System.out.println(bean == bean1);
+
+        System.out.println(bean);
+
+    }
+
+    @Test
+    public void testBeanFactoryV4() {
+        DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
+
+        // 注册UserDao
+        beanFactory.registerBeanDefinition("uDao", new BeanDefinition(UserDao.class,
+                new PropertyValues()
+                        .addPropertyValue(new PropertyValue("uid", "pp"))
+                        .addPropertyValue(new PropertyValue("uName", "pp"))
+        ));
+
+        // 注册UserService
+        PropertyValues propertyValues = new PropertyValues();
+        propertyValues.addPropertyValue(new PropertyValue("name", "haha"));
+        propertyValues.addPropertyValue(new PropertyValue("userDao", new BeanReference("uDao")));
+
+        // 注入
+        String beanName = "userService";
+        beanFactory.registerBeanDefinition(beanName, new BeanDefinition(UserService.class, propertyValues));
+
+        Object bean = beanFactory.getBean(beanName);
+        if(bean instanceof UserService){
+            ((UserService) bean).queryByUserInfo();
+        }
 
         System.out.println(bean);
 

@@ -4,7 +4,7 @@ import org.mini.spring.io.factory.config.BeanDefinition;
 
 /**
  * <p>
- *     TODO
+ *     通过预定义的BeanDefinition， 完成Bean的注册
  * </p>
  *
  * @author pp
