@@ -36,11 +36,19 @@ public interface BeanFactory {
     }*/
 
     /**
-     * 获取Bean
+     * 获取Bean: 无参构造形式
      * @param name
      * @return
      */
     Object getBean(String name) throws BeansException;
 
+    /**
+     * 获取Bean： 有参构造形式
+     * @param name
+     * @param args
+     * @return
+     * @throws BeansException
+     */
+    Object getBean(String name, Object...args) throws BeansException;
 
 }

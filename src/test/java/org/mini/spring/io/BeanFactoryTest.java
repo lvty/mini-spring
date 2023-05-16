@@ -59,4 +59,30 @@ public class BeanFactoryTest {
         System.out.println(bean == bean1);
 
     }
+
+    @Test
+    public void testBeanFactoryV3() {
+        DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
+        String beanName = "userService";
+
+        // 注册bean
+        BeanDefinition beanDefinition = new BeanDefinition(UserService.class);
+        beanFactory.registerBeanDefinition(beanName, beanDefinition);
+
+        // 首次获取
+        Object bean = beanFactory.getBean(beanName, "haha");
+        if(bean instanceof UserService){
+            ((UserService) bean).queryByUserInfo();
+        }
+
+        Object bean1 = beanFactory.getBean(beanName);
+        if(bean1 instanceof UserService){
+            ((UserService) bean1).queryByUserInfo();
+        }
+
+        System.out.println(bean == bean1);
+
+        System.out.println(bean);
+
+    }
 }
