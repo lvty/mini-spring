@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans>
+    <bean id="uDao" class="org.mini.spring.beans.service.UserDao">
+        <property name="uid" value="pp"/>
+        <property name="uName" value="pp"/>
+    </bean>
+
+    <bean id="userService" class="org.mini.spring.beans.service.UserService">
+        <property name="name" value="xx"/>
+        <property name="userDao" ref="uDao"/>
+    </bean>
+
+</beans>
