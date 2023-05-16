@@ -1,6 +1,9 @@
 package org.mini.spring.io;
 
 import org.junit.Test;
+import org.mini.spring.io.factory.BeanFactory;
+import org.mini.spring.io.factory.config.BeanDefinition;
+import org.mini.spring.io.factory.support.DefaultListableBeanFactory;
 import org.mini.spring.io.service.UserService;
 
 /**
@@ -31,5 +34,29 @@ public class BeanFactoryTest {
         if (userService instanceof UserService) {
             ((UserService) userService).queryByUserInfo();
         }*/
+    }
+
+    @Test
+    public void testBeanFactoryV2() {
+        DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
+        String beanName = "userService";
+
+        // 注册bean
+        BeanDefinition beanDefinition = new BeanDefinition(UserService.class);
+        beanFactory.registerBeanDefinition(beanName, beanDefinition);
+
+        // 首次获取
+        Object bean = beanFactory.getBean(beanName);
+        if(bean instanceof UserService){
+            ((UserService) bean).queryByUserInfo();
+        }
+
+        Object bean1 = beanFactory.getBean(beanName);
+        if(bean1 instanceof UserService){
+            ((UserService) bean1).queryByUserInfo();
+        }
+
+        System.out.println(bean == bean1);
+
     }
 }

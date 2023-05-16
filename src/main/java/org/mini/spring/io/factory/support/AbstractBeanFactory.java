@@ -7,7 +7,7 @@ import org.mini.spring.io.factory.config.BeanDefinition;
 /**
  * <p>
  * 抽象beanFactory， 定义模板方法
- * DefaultSingletonBeanRegistry: 具备使用单例注册类的方法
+ * DefaultSingletonBeanRegistry: 具备获取/注册 单例类的方法
  * </p>
  *
  * @author pp
