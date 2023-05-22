@@ -12,6 +12,13 @@ public class UserService {
 
     private String name;
 
+    /**
+     * 新增以下属性，完成对BeanPostProcessor、BeanFactoryPostProcess对Bean信息的扩展处理
+     */
+    private String company;
+
+    private String location;
+
     private UserDao userDao;
 
     public UserService(String name) {
@@ -19,6 +26,38 @@ public class UserService {
     }
 
     public UserService() {
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getCompany() {
+        return company;
+    }
+
+    public void setCompany(String company) {
+        this.company = company;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public UserDao getUserDao() {
+        return userDao;
+    }
+
+    public void setUserDao(UserDao userDao) {
+        this.userDao = userDao;
     }
 
     public void queryByUserInfo(){
@@ -29,6 +68,9 @@ public class UserService {
     public String toString() {
         return "UserService{" +
                 "name='" + name + '\'' +
+                ", company='" + company + '\'' +
+                ", location='" + location + '\'' +
+                ", userDao=" + userDao +
                 '}';
     }
 }

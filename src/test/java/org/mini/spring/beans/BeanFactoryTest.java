@@ -1,12 +1,12 @@
 package org.mini.spring.beans;
 
 import org.junit.Test;
-import org.mini.spring.beans.factory.config.BeanDefinition;
-import org.mini.spring.beans.factory.config.BeanReference;
+import org.mini.spring.beans.factory.config.*;
 import org.mini.spring.beans.factory.support.DefaultListableBeanFactory;
 import org.mini.spring.beans.factory.support.XMLBeanDefinitionReader;
 import org.mini.spring.beans.service.UserDao;
 import org.mini.spring.beans.service.UserService;
+import org.mini.spring.context.support.ClassPathXmlApplicationContext;
 
 /**
  * <p>
@@ -133,5 +133,59 @@ public class BeanFactoryTest {
 
         System.out.println(bean);
 
+    }
+
+    /**
+     * 不使用增强配置
+     */
+    @Test
+    public void testBeanFactoryV61() {
+        DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
+
+        // 读取配置文件并注册
+        XMLBeanDefinitionReader xmlBeanDefinitionReader = new XMLBeanDefinitionReader(beanFactory);
+        xmlBeanDefinitionReader.loadBeanDefinitions("classpath:spring.xml");
+
+        // BeanDefinition加载完成 & Bean实例化之前， 修改BeanDefinition的属性值
+        BeanFactoryPostProcessor beanFactoryPostProcessor = new MyBeanFactoryPostProcessorTest();
+        beanFactoryPostProcessor.postProcessBeanFactory(beanFactory);
+
+        // 实例化之前修改Bean的属性信息
+        BeanPostProcessor beanPostProcessor = new MyBeanPostProcessorTest();
+        beanFactory.addBeanPostProcessor(beanPostProcessor);
+
+
+        // 获取Bean
+        Object bean = beanFactory.getBean("userService");
+        if(bean instanceof UserService){
+            ((UserService) bean).queryByUserInfo();
+        }
+
+        System.out.println(bean);
+
+        /*user info: pp->>774dd51f-d98e-429a-a20a-723c8a4d6901
+        UserService{name='xx', company='alibaba',
+        location='Modify to shanghai.', userDao=org.mini.spring.beans.service.UserDao@46f5f779}*/
+    }
+
+    /**
+     * 使用增强配置
+     */
+    @Test
+    public void testBeanFactoryV62() {
+        // 初始化BeanFactory
+        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:springv2.xml");
+
+        // 获取Bean对象
+        Object bean = applicationContext.getBean("userService");
+        if(bean instanceof UserService){
+            ((UserService) bean).queryByUserInfo();
+        }
+
+        System.out.println(bean);
+
+        /*user info: pp->>774dd51f-d98e-429a-a20a-723c8a4d6901
+        UserService{name='xx', company='alibaba',
+        location='Modify to shanghai.', userDao=org.mini.spring.beans.service.UserDao@46f5f779}*/
     }
 }

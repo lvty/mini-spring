@@ -12,4 +12,6 @@
         <property name="company" value="tencent"/>
     </bean>
 
+    <bean id="BeanFactoryPostProcessor" class="org.mini.spring.beans.factory.config.MyBeanFactoryPostProcessorTest"/>
+    <bean id="BeanPostProcessor" class="org.mini.spring.beans.factory.config.MyBeanPostProcessorTest"/>
 </beans>

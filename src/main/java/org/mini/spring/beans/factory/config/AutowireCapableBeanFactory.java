@@ -11,4 +11,20 @@ import org.mini.spring.beans.factory.BeanFactory;
  * @since 2023/5/16
  */
 public interface AutowireCapableBeanFactory extends BeanFactory {
+
+    /**
+     * 前置操作
+     * @param existingBean
+     * @param beanName
+     * @return
+     */
+    Object applyBeanPostProcessorsBeforeInitialization(Object existingBean, String beanName);
+
+    /**
+     * 后置操作
+     * @param existingBean
+     * @param beanName
+     * @return
+     */
+    Object applyBeanPostProcessorsAfterInitialization(Object existingBean, String beanName);
 }

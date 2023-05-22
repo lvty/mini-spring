@@ -1,6 +1,8 @@
 package org.mini.spring.beans.factory;
 
 import org.mini.spring.beans.factory.config.AutowireCapableBeanFactory;
+import org.mini.spring.beans.factory.config.BeanFactoryPostProcessor;
+import org.mini.spring.beans.factory.config.BeanPostProcessor;
 import org.mini.spring.beans.factory.config.ConfigurableBeanFactory;
 
 /**
@@ -14,6 +16,8 @@ import org.mini.spring.beans.factory.config.ConfigurableBeanFactory;
 public interface ConfigurableListenableBeanFactory extends ListableBeanFactory,
         ConfigurableBeanFactory, AutowireCapableBeanFactory {
 
-    void getBeanDefinition(String beanName);
+    void addBeanPostProcessor(BeanPostProcessor beanPostProcessor);
+
+    void preInstantiateSingletons();
 
 }

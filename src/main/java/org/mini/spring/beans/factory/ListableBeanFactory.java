@@ -1,5 +1,7 @@
 package org.mini.spring.beans.factory;
 
+import java.util.Map;
+
 /**
  * <p>
  *     TODO
@@ -10,7 +12,7 @@ package org.mini.spring.beans.factory;
  */
 public interface ListableBeanFactory<T> extends BeanFactory {
 
-    void getBeansOfType(Class<T> type);
+    Map<String, T> getBeansOfType(Class<T> type);
 
     void getBeanDefinitionNames();
 

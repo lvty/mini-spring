@@ -147,4 +147,11 @@ public class XMLBeanDefinitionReader extends AbstractBeanDefinitionReader {
         Resource resource = resourceLoader.getResource(location);
         loadBeanDefinitions(resource);
     }
+
+    @Override
+    public void loadBeanDefinitions(String... locations) throws BeansException {
+        for(String location: locations){
+            loadBeanDefinitions(location);
+        }
+    }
 }

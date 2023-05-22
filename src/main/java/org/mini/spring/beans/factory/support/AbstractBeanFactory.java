@@ -3,6 +3,10 @@ package org.mini.spring.beans.factory.support;
 import org.mini.spring.beans.BeansException;
 import org.mini.spring.beans.factory.BeanFactory;
 import org.mini.spring.beans.factory.config.BeanDefinition;
+import org.mini.spring.beans.factory.config.BeanPostProcessor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <p>
@@ -14,6 +18,17 @@ import org.mini.spring.beans.factory.config.BeanDefinition;
  * @since 2023/5/15
  */
 public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry implements BeanFactory {
+
+    private final List<BeanPostProcessor> beanPostProcessors = new ArrayList<>();
+
+    public List<BeanPostProcessor> getBeanPostProcessors() {
+        return this.beanPostProcessors;
+    }
+
+    public void addBeanPostProcessor(BeanPostProcessor beanPostProcessor) {
+        beanPostProcessors.add(beanPostProcessor);
+    }
+
 
     /**
      * 定义获取Bean的基础步骤

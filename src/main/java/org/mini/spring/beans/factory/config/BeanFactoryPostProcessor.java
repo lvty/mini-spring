@@ -5,7 +5,9 @@ import org.mini.spring.beans.factory.ConfigurableListenableBeanFactory;
 
 /**
  * <p>
- *     提供修改BeanDefinition属性的机制
+ *     提供修改BeanDefinition属性的机制：
+ *     Allows for custom modification of an application context's bean definitions,
+ *      adapting the bean property values of the context's underlying bean factory
  * </p>
  *
  * @author pp

@@ -5,6 +5,7 @@ import org.mini.spring.beans.BeansException;
 /**
  * <p>
  *     定制化修改Bean对象
+ *     Factory hook that allows for custom modification of new bean instances, e.g.
  * </p>
  *
  * @author pp

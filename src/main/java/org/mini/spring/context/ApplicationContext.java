@@ -4,7 +4,7 @@ import org.mini.spring.beans.factory.ListableBeanFactory;
 
 /**
  * <p>
- * 继承于BeanFactory
+ *      继承于BeanFactory
  * </p>
  *
  * @author pp

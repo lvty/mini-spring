@@ -41,6 +41,34 @@ Note: 以上两个步骤均依赖BeanDefinition!!
 方便使用方完成Bean的定义、加载、注册、初始化、获取、使用、销毁等一系列过程呢
 且支持对中间的过程进行动态的扩展的机制呢
 
+### 统一使用
+1) 定义ApplicationContext暴露统一的入口给用户使用
+而非先创建DefaultListableBeanFactory，配合XMLBeanDefinitionReader完成Bean的定义、加载和初始化
+
+3) ConfigurableApplicationContext
+定义refresh() 
+4) AbstractApplicationContext
+对refresh方法的骨架定义， 主要包括四个步骤：
+- 定义了BeanFactory的创建：refreshBeanFactory()
+- BeanFactoryPostProcessor的获取和执行
+- BeanPostProcessor的注册
+- 提前初始化单例Bean
+5) AbstractRefreshableApplicationContext
+执行refreshBeanFactory方法， 主要目的是创建工厂: DefaultListableBeanFactory；
+完成BeanDefinition的加载方法的定义
+6) AbstractXmlApplicationContext
+完成XMLBeanDefinitionReader的定义， 根据其方法完成BeanDefinition的加载
+核心代码
+```java
+XMLBeanDefinitionReader xmlBeanDefinitionReader = new XMLBeanDefinitionReader(beanFactory, this);
+```
+7) ClassPathXMLApplicationContext
+对外暴露的接口， 主要给出资源的路径即可
+
+
+
+
+
 ## 从扩展角度
 哪些地方可以完成对Bean对象的扩展机制？
 - BeanDefinition生成后是否可以支持动态的修改其定义， 而不是从原有的资源处定义后不可以再修改(不可变)

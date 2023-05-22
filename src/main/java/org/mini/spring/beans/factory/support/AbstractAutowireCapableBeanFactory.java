@@ -4,10 +4,14 @@ import cn.hutool.core.bean.BeanUtil;
 import org.mini.spring.beans.BeansException;
 import org.mini.spring.beans.PropertyValue;
 import org.mini.spring.beans.PropertyValues;
+import org.mini.spring.beans.factory.config.AutowireCapableBeanFactory;
 import org.mini.spring.beans.factory.config.BeanDefinition;
+import org.mini.spring.beans.factory.config.BeanPostProcessor;
 import org.mini.spring.beans.factory.config.BeanReference;
 
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <p>
@@ -19,7 +23,7 @@ import java.lang.reflect.Constructor;
  * @author pp
  * @since 2023/5/15
  */
-public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFactory {
+public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFactory implements AutowireCapableBeanFactory {
 
     private InstantiationStrategy instantiationStrategy = new CglibSubClassingInstantiationStrategy();
 
@@ -33,6 +37,9 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
             // 完成Bean的创建之后， 此处需要完成对象的属性填充，对象的属性包含基础类型和引用类型
             applyPropertyValues(name, bean, beanDefinition);
+
+            // 执行Bean的初始化方法和BeanPostProcessor的前置和后置处理方法
+            bean = initializeBean(name, bean, beanDefinition);
         } catch (InstantiationException | IllegalAccessException e) {
             throw new BeansException("Instantiation of bean failed", e);
         }
@@ -51,6 +58,9 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
             // 完成Bean的创建之后， 此处需要完成对象的属性填充，对象的属性包含基础类型和引用类型
             applyPropertyValues(name, bean, beanDefinition);
+
+            // 执行Bean的初始化方法和BeanPostProcessor的前置和后置处理方法
+            bean = initializeBean(name, bean, beanDefinition);
         } catch (Exception e) {
             throw new BeansException("Instantiation of bean failed", e);
         }
@@ -59,6 +69,53 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         addSingleton(name, bean);
 
         return bean;
+    }
+
+    private Object initializeBean(String name, Object bean, BeanDefinition beanDefinition) {
+        // 1. 执行BeanPostProcessor Before 处理
+        Object wrapped = applyBeanPostProcessorsBeforeInitialization(bean, name);
+
+        invokeInitMethods(name, wrapped, beanDefinition);
+        // 3. 执行BeanPostProcessor after 处理
+        wrapped = applyBeanPostProcessorsAfterInitialization(bean, name);
+        return wrapped;
+    }
+
+    protected void invokeInitMethods(String beanName, Object bean, BeanDefinition mbd)
+            throws BeansException {
+
+    }
+
+
+
+    @Override
+    public Object applyBeanPostProcessorsBeforeInitialization(Object existingBean, String beanName)
+            throws BeansException {
+
+        Object result = existingBean;
+        for (BeanPostProcessor processor : getBeanPostProcessors()) {
+            Object current = processor.postProcessBeforeInitialization(result, beanName);
+            if (current == null) {
+                return result;
+            }
+            result = current;
+        }
+        return result;
+    }
+
+    @Override
+    public Object applyBeanPostProcessorsAfterInitialization(Object existingBean, String beanName)
+            throws BeansException {
+
+        Object result = existingBean;
+        for (BeanPostProcessor processor : getBeanPostProcessors()) {
+            Object current = processor.postProcessAfterInitialization(result, beanName);
+            if (current == null) {
+                return result;
+            }
+            result = current;
+        }
+        return result;
     }
 
     /**
