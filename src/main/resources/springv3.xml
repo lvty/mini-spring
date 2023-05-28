@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans>
+    <bean id="uDao" class="org.mini.spring.beans.service.UserDao" init-Method="initMethod" destroy-method="destroyMethod">
+        <property name="uid" value="pp"/>
+        <property name="uName" value="pp"/>
+    </bean>
+
+    <bean id="userService" class="org.mini.spring.beans.service.UserService">
+        <property name="name" value="xx"/>
+        <property name="userDao" ref="uDao"/>
+        <property name="location" value="beijing"/>
+        <property name="company" value="tencent"/>
+    </bean>
+
+    <bean id="BeanFactoryPostProcessor" class="org.mini.spring.beans.factory.config.MyBeanFactoryPostProcessorTest"/>
+    <bean id="BeanPostProcessor" class="org.mini.spring.beans.factory.config.MyBeanPostProcessorTest"/>
+
+</beans>

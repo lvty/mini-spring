@@ -1,15 +1,19 @@
 package org.mini.spring.beans.factory.support;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.StrUtil;
 import org.mini.spring.beans.BeansException;
 import org.mini.spring.beans.PropertyValue;
 import org.mini.spring.beans.PropertyValues;
+import org.mini.spring.beans.factory.DisposableBean;
+import org.mini.spring.beans.factory.InitializingBean;
 import org.mini.spring.beans.factory.config.AutowireCapableBeanFactory;
 import org.mini.spring.beans.factory.config.BeanDefinition;
 import org.mini.spring.beans.factory.config.BeanPostProcessor;
 import org.mini.spring.beans.factory.config.BeanReference;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,6 +48,9 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             throw new BeansException("Instantiation of bean failed", e);
         }
 
+        // 注册：实现了DisposableBean接口的全部Bean对象
+        registerDisposableBeanIfNecessary(name, bean, beanDefinition);
+
         // 完成单例bean的注入
         addSingleton(name, bean);
 
@@ -65,27 +72,54 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
             throw new BeansException("Instantiation of bean failed", e);
         }
 
+        // 注册：实现了DisposableBean接口的全部Bean对象
+        registerDisposableBeanIfNecessary(name, bean, beanDefinition);
+
         // 完成单例bean的注入
         addSingleton(name, bean);
 
         return bean;
     }
 
+    private void registerDisposableBeanIfNecessary(String name, Object bean, BeanDefinition beanDefinition) {
+        if(bean instanceof DisposableBean || StrUtil.isNotBlank(beanDefinition.getDestroyMethodName())){
+            registerDisposableBean(name, new DisposableBeanAdapter(bean, name, beanDefinition));
+        }
+    }
+
     private Object initializeBean(String name, Object bean, BeanDefinition beanDefinition) {
         // 1. 执行BeanPostProcessor Before 处理
         Object wrapped = applyBeanPostProcessorsBeforeInitialization(bean, name);
 
-        invokeInitMethods(name, wrapped, beanDefinition);
+        try {
+            invokeInitMethods(name, wrapped, beanDefinition);
+        } catch (Exception ex) {
+            throw new BeansException("Invocation of init method of bean[" + name + "] failed", ex);
+        }
         // 3. 执行BeanPostProcessor after 处理
         wrapped = applyBeanPostProcessorsAfterInitialization(bean, name);
         return wrapped;
     }
 
-    protected void invokeInitMethods(String beanName, Object bean, BeanDefinition mbd)
-            throws BeansException {
+    protected void invokeInitMethods(String beanName, Object bean, BeanDefinition beanDefinition)
+            throws Exception {
+        // 1. 判断是否实现初始化接口来实现初始化扩展
+        if (bean instanceof InitializingBean) {
+            ((InitializingBean) bean).afterPropertiesSet();
+        }
 
+        // 2. 或者通过配置信息的方式来完成扩展
+        String initMethodName = beanDefinition.getInitMethodName();
+        if (StrUtil.isNotBlank(initMethodName)) {
+            Method method = beanDefinition.getBeanClass().getMethod(initMethodName);
+            if (null == initMethodName) {
+                throw new BeansException("Could not find an init method names '"
+                        + initMethodName + "' on bean with name '" + beanName + "'");
+            }
+            // fixme, 此处是有参初始化方法怎么处理
+            method.invoke(bean);
+        }
     }
-
 
 
     @Override

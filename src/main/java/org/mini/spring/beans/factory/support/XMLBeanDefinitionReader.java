@@ -20,16 +20,16 @@ import java.io.InputStream;
  * <p>
  * 最终实现类只需要关心具体的业务实现：
  * DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
- *
- *         // 读取配置文件并注册
- *         XMLBeanDefinitionReader xmlBeanDefinitionReader = new XMLBeanDefinitionReader(beanFactory);
- *         xmlBeanDefinitionReader.loadBeanDefinitions("classpath:spring.xml");
- *
- *         // 获取对象
- *         Object bean = beanFactory.getBean("xx");
- *         if(bean instanceof UserService){
- *             ((UserService) bean).doSomething();
- *         }
+ * <p>
+ * // 读取配置文件并注册
+ * XMLBeanDefinitionReader xmlBeanDefinitionReader = new XMLBeanDefinitionReader(beanFactory);
+ * xmlBeanDefinitionReader.loadBeanDefinitions("classpath:spring.xml");
+ * <p>
+ * // 获取对象
+ * Object bean = beanFactory.getBean("xx");
+ * if(bean instanceof UserService){
+ * ((UserService) bean).doSomething();
+ * }
  *
  *
  * </p>
@@ -58,8 +58,8 @@ public class XMLBeanDefinitionReader extends AbstractBeanDefinitionReader {
 
     /**
      * 根据指定的流完成资源的加载: 获取Bean的配置信息；
-     *  id /name/class
-     *      property name/value/ref
+     * id /name/class
+     * property name/value/ref
      *
      * @param in
      */
@@ -101,6 +101,20 @@ public class XMLBeanDefinitionReader extends AbstractBeanDefinitionReader {
 
             // 定义Bean
             BeanDefinition beanDefinition = new BeanDefinition(clazz);
+
+            // 定义初始化方法
+            String initMethod = bean.getAttribute("init-Method");
+            if (StrUtil.isNotBlank(initMethod)) {
+                beanDefinition.setInitMethodName(initMethod);
+            }
+
+            // 定义销毁方法
+            String destroyMethod = bean.getAttribute("destroy-method");
+            if (StrUtil.isNotBlank(destroyMethod)) {
+                beanDefinition.setDestroyMethodName(destroyMethod);
+            }
+
+
             // 读取属性并完成属性定义
             NodeList cn = item.getChildNodes();
             for (int j = 0; j < cn.getLength(); j++) {
@@ -126,7 +140,7 @@ public class XMLBeanDefinitionReader extends AbstractBeanDefinitionReader {
                 beanDefinition.getPropertyValues().addPropertyValue(propertyValue);
             }
 
-            if(getRegistry().containsBeanDefinition(beanName)){
+            if (getRegistry().containsBeanDefinition(beanName)) {
                 throw new BeansException("Duplicate beanName[" + beanName + "] is not allowed");
             }
 
@@ -150,7 +164,7 @@ public class XMLBeanDefinitionReader extends AbstractBeanDefinitionReader {
 
     @Override
     public void loadBeanDefinitions(String... locations) throws BeansException {
-        for(String location: locations){
+        for (String location : locations) {
             loadBeanDefinitions(location);
         }
     }

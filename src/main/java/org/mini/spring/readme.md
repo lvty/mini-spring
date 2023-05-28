@@ -41,6 +41,15 @@ Note: 以上两个步骤均依赖BeanDefinition!!
 方便使用方完成Bean的定义、加载、注册、初始化、获取、使用、销毁等一系列过程呢
 且支持对中间的过程进行动态的扩展的机制呢
 
+3) 初始化和销毁方法
+- 在xml配置文件中增加init-method和destroy-method, 对应到BeanDefinition的属性中
+- 当initialzeBean初始化操作过程中，就可以通过反射的方法来调用属性配置的方法信息
+- 如果是接口实现的方式，可以直接通过Bean对象调用对应接口定义的方法接口(InitialingBean(Bean)).afterPropertiesSet()
+- 当Bean对象初始化完成，会注册销毁方法到DefaultSingletonBeanRegistry中的disposableBeans属性中，统一进行处理；
+
+3.1) 用途
+接口暴露，数据库数据读取，配置文件加载等
+
 ### 统一使用
 1) 定义ApplicationContext暴露统一的入口给用户使用
 而非先创建DefaultListableBeanFactory，配合XMLBeanDefinitionReader完成Bean的定义、加载和初始化

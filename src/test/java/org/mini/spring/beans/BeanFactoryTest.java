@@ -188,4 +188,30 @@ public class BeanFactoryTest {
         UserService{name='xx', company='alibaba',
         location='Modify to shanghai.', userDao=org.mini.spring.beans.service.UserDao@46f5f779}*/
     }
+
+    /**
+     * 使用增强配置
+     */
+    @Test
+    public void testBeanFactoryV7() {
+        // 初始化BeanFactory
+        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:springv3.xml");
+
+        applicationContext.registerShutdownHook();
+
+        // 获取Bean对象
+        Object bean = applicationContext.getBean("userService");
+        if(bean instanceof UserService){
+            ((UserService) bean).queryByUserInfo();
+        }
+
+        System.out.println(bean);
+
+        /*userDao: this is a new init method.
+        execute UserService afterPropertiesSet.
+        user info: pp->>485fdd82-d12f-4a8a-b8fe-5e3fb24d3fb1
+        UserService{name='xx', company='alibaba', location='Modify to shanghai.', userDao=org.mini.spring.beans.service.UserDao@270421f5}
+        userDao: execute destroy method.
+        execute userService destroy.*/
+    }
 }

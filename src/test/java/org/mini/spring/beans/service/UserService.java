@@ -1,5 +1,8 @@
 package org.mini.spring.beans.service;
 
+import org.mini.spring.beans.factory.DisposableBean;
+import org.mini.spring.beans.factory.InitializingBean;
+
 /**
  * <p>
  *     TODO
@@ -8,7 +11,7 @@ package org.mini.spring.beans.service;
  * @author pp
  * @since 2023/5/15
  */
-public class UserService {
+public class UserService implements InitializingBean, DisposableBean {
 
     private String name;
 
@@ -72,5 +75,15 @@ public class UserService {
                 ", location='" + location + '\'' +
                 ", userDao=" + userDao +
                 '}';
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        System.out.println("execute userService destroy.");
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        System.out.println("execute UserService afterPropertiesSet.");
     }
 }

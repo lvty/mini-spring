@@ -21,6 +21,14 @@ public class UserDao {
         this.uName = uName;
     }
 
+    public void initMethod() {
+        System.out.println("userDao: this is a new init method.");
+    }
+
+    public void destroyMethod() {
+        System.out.println("userDao: execute destroy method.");
+    }
+
     public UserDao() {
     }
 

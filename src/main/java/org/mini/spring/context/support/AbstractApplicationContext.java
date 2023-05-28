@@ -6,12 +6,13 @@ import org.mini.spring.beans.factory.config.BeanFactoryPostProcessor;
 import org.mini.spring.beans.factory.config.BeanPostProcessor;
 import org.mini.spring.context.ConfigurableApplicationContext;
 import org.mini.spring.core.io.DefaultResourceLoader;
+
 import java.util.Map;
 import java.util.Objects;
 
 /**
  * <p>
- *     继承DefaultResourceLoader，主要完成spring.xml配置资源的加载
+ * 继承DefaultResourceLoader，主要完成spring.xml配置资源的加载
  * </p>
  *
  * @author pp
@@ -40,16 +41,17 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
     /**
      * 完成BeanFactory的创建， 和BeanDefinition的加载
+     *
      * @throws BeansException
      */
     protected abstract void refreshBeanFactory() throws BeansException;
 
     protected abstract ConfigurableListenableBeanFactory getBeanFactory();
 
-    private void invokeBeanFactoryPostProcessors(ConfigurableListenableBeanFactory beanFactory){
+    private void invokeBeanFactoryPostProcessors(ConfigurableListenableBeanFactory beanFactory) {
         // todo 完善此处的注册方法
         Object beanFactoryPostProcessor = beanFactory.getBean("BeanFactoryPostProcessor");
-        if(Objects.nonNull(beanFactoryPostProcessor)){
+        if (Objects.nonNull(beanFactoryPostProcessor)) {
             ((BeanFactoryPostProcessor) beanFactoryPostProcessor).postProcessBeanFactory(beanFactory);
         }
         /*Map<String, BeanFactoryPostProcessor> beanFactoryPostProcessorMap =
@@ -60,10 +62,10 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
         }*/
     }
 
-    private void registerBeanPostProcessors(ConfigurableListenableBeanFactory beanFactory){
+    private void registerBeanPostProcessors(ConfigurableListenableBeanFactory beanFactory) {
         // todo 完善此处的注册方法
         Object beanFactoryPostProcessor = beanFactory.getBean("BeanPostProcessor");
-        if(Objects.nonNull(beanFactoryPostProcessor)){
+        if (Objects.nonNull(beanFactoryPostProcessor)) {
             beanFactory.addBeanPostProcessor((BeanPostProcessor) beanFactoryPostProcessor);
         }
         /*Map<String, BeanPostProcessor> beanFactoryPostProcessorMap =
@@ -72,6 +74,20 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
         for(BeanPostProcessor beanPostProcessor: beanFactoryPostProcessorMap.values()){
             beanFactory.addBeanPostProcessor(beanPostProcessor);
         }*/
+    }
+
+    @Override
+    public void close() {
+        try {
+            getBeanFactory().destroySingletons();
+        } catch (Exception ex) {
+            throw new BeansException("ApplicationContext close error.", ex);
+        }
+    }
+
+    @Override
+    public void registerShutdownHook() {
+        Runtime.getRuntime().addShutdownHook(new Thread(this::close));
     }
 
     @Override
