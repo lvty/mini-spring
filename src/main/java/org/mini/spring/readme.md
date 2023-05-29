@@ -85,7 +85,15 @@ XMLBeanDefinitionReader xmlBeanDefinitionReader = new XMLBeanDefinitionReader(be
 - createBean前后是否可以支持一些动态修改
 引出接口BeanPostProcess， 完成Bean的初始化前后修改操作
 
-
+### Aware感知容器对象
+如果想要获取到Spring框架提供的BeanFactory、ApplicationContext、BeanClassLoader等，进一步做一些扩展框架的使用
+该怎么设计？
+- Spring提供的这些资源， 其获取方式怎么定义？
+通过定义标记接口， 类似InitialingBean， 这个标记接口不需要有任何接口方法， 只起到标记作用；
+具体的功能由继承此接口的其他功能性接口来完成， 在代码里面通过InstanceOf来进行判断和调用；
+定义Aware接口，其实现有：BeanFactoryAware/BeanClassLoaderAware/BeanNameAware/ApplicationContextAware
+其实现能感知到容器中的相关对象
+- 这些获取方式怎么和Spring框架无缝衔接？
 
 
 

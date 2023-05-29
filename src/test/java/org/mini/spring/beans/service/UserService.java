@@ -1,7 +1,8 @@
 package org.mini.spring.beans.service;
 
-import org.mini.spring.beans.factory.DisposableBean;
-import org.mini.spring.beans.factory.InitializingBean;
+import org.mini.spring.beans.factory.*;
+import org.mini.spring.context.ApplicationContext;
+import org.mini.spring.context.ApplicationContextAware;
 
 /**
  * <p>
@@ -11,7 +12,9 @@ import org.mini.spring.beans.factory.InitializingBean;
  * @author pp
  * @since 2023/5/15
  */
-public class UserService implements InitializingBean, DisposableBean {
+public class UserService implements InitializingBean, DisposableBean,
+        BeanNameAware, BeanClassLoaderAware, ApplicationContextAware, BeanFactoryAware {
+
 
     private String name;
 
@@ -85,5 +88,25 @@ public class UserService implements InitializingBean, DisposableBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         System.out.println("execute UserService afterPropertiesSet.");
+    }
+
+    @Override
+    public void setBeanClassLoader(ClassLoader classLoader) {
+        System.out.println("Aware classLoader: " + classLoader);
+    }
+
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) {
+        System.out.println("Aware beanFactory: " + beanFactory);
+    }
+
+    @Override
+    public void setBeanName(String name) {
+        System.out.println("Aware beanName: " + name);
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        System.out.println("Aware applicationContext: " + applicationContext);
     }
 }

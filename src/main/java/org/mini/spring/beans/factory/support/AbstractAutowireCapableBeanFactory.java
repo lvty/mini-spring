@@ -5,8 +5,7 @@ import cn.hutool.core.util.StrUtil;
 import org.mini.spring.beans.BeansException;
 import org.mini.spring.beans.PropertyValue;
 import org.mini.spring.beans.PropertyValues;
-import org.mini.spring.beans.factory.DisposableBean;
-import org.mini.spring.beans.factory.InitializingBean;
+import org.mini.spring.beans.factory.*;
 import org.mini.spring.beans.factory.config.AutowireCapableBeanFactory;
 import org.mini.spring.beans.factory.config.BeanDefinition;
 import org.mini.spring.beans.factory.config.BeanPostProcessor;
@@ -82,12 +81,29 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
     }
 
     private void registerDisposableBeanIfNecessary(String name, Object bean, BeanDefinition beanDefinition) {
-        if(bean instanceof DisposableBean || StrUtil.isNotBlank(beanDefinition.getDestroyMethodName())){
+        if (bean instanceof DisposableBean || StrUtil.isNotBlank(beanDefinition.getDestroyMethodName())) {
             registerDisposableBean(name, new DisposableBeanAdapter(bean, name, beanDefinition));
         }
     }
 
     private Object initializeBean(String name, Object bean, BeanDefinition beanDefinition) {
+        // 2023-05-29: 添加invokeAwareMethods
+        // 感知到已实现Aware接口的类
+        if (bean instanceof Aware) {
+            if (bean instanceof BeanFactoryAware) {
+                ((BeanFactoryAware) bean).setBeanFactory(this);
+            }
+
+            if (bean instanceof BeanClassLoaderAware) {
+                ((BeanClassLoaderAware) bean).setBeanClassLoader(getBeanClassLoader());
+            }
+
+            if (bean instanceof BeanNameAware) {
+                ((BeanNameAware) bean).setBeanName(name);
+            }
+        }
+
+
         // 1. 执行BeanPostProcessor Before 处理
         Object wrapped = applyBeanPostProcessorsBeforeInitialization(bean, name);
 
@@ -99,6 +115,10 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         // 3. 执行BeanPostProcessor after 处理
         wrapped = applyBeanPostProcessorsAfterInitialization(bean, name);
         return wrapped;
+    }
+
+    private ClassLoader getBeanClassLoader() {
+        return null;
     }
 
     protected void invokeInitMethods(String beanName, Object bean, BeanDefinition beanDefinition)

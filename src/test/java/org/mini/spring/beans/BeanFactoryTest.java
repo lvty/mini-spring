@@ -214,4 +214,37 @@ public class BeanFactoryTest {
         userDao: execute destroy method.
         execute userService destroy.*/
     }
+
+    /**
+     * 使用增强配置
+     */
+    @Test
+    public void testBeanFactoryV8() {
+        // 初始化BeanFactory
+        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:springv3.xml");
+
+        applicationContext.registerShutdownHook();
+
+        // 获取Bean对象
+        Object bean = applicationContext.getBean("userService");
+        if(bean instanceof UserService){
+            ((UserService) bean).queryByUserInfo();
+        }
+
+        System.out.println(bean);
+
+        /*
+        * userDao: this is a new init method.
+            Aware beanFactory: org.mini.spring.beans.factory.support.DefaultListableBeanFactory@6fdb1f78
+            Aware classLoader: null
+            Aware beanName: userService
+            Aware applicationContext: org.mini.spring.context.support.ClassPathXmlApplicationContext@51016012
+            execute UserService afterPropertiesSet.
+            user info: pp->>c88e1a0b-9eb3-4dd3-9ddc-129f694c63cb
+            UserService{name='xx', company='alibaba', location='Modify to shanghai.', userDao=org.mini.spring.beans.service.UserDao@4f4a7090}
+            userDao: execute destroy method.
+            execute userService destroy.
+
+        * */
+    }
 }
