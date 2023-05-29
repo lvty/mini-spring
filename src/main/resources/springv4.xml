@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans>
+
+    <bean id="proxyUserDao" class="org.mini.spring.beans.factory.config.ProxyBeanFactory"/>
+
+    <bean id="userService" class="org.mini.spring.beans.service.UserService" scope="prototype">
+        <property name="name" value="xx"/>
+        <property name="iUserDao" ref="proxyUserDao"/>
+        <property name="location" value="beijing"/>
+        <property name="company" value="tencent"/>
+    </bean>
+
+    <bean id="BeanFactoryPostProcessor" class="org.mini.spring.beans.factory.config.MyBeanFactoryPostProcessorTest"/>
+    <bean id="BeanPostProcessor" class="org.mini.spring.beans.factory.config.MyBeanPostProcessorTest"/>
+
+</beans>

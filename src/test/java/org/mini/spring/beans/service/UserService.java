@@ -27,6 +27,13 @@ public class UserService implements InitializingBean, DisposableBean,
 
     private UserDao userDao;
 
+    private IUserDao iUserDao;
+
+
+    public String queryUserInfo(){
+        return iUserDao.queryUserName(name) + "," + company + "," + location;
+    }
+
     public UserService(String name) {
         this.name = name;
     }

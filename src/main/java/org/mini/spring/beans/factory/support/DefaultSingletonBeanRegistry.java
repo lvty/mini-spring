@@ -16,6 +16,8 @@ import java.util.Map;
  */
 public class DefaultSingletonBeanRegistry implements SingletonBeanRegistry {
 
+    protected final Object NULL_OBJECT = null;
+
     @Override
     public Object getSingleton(String beanName) {
         return singletonObjects.get(beanName);

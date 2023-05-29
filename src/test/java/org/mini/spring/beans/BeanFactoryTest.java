@@ -247,4 +247,52 @@ public class BeanFactoryTest {
 
         * */
     }
+
+
+    /**
+     * 测试Prototype
+     */
+    @Test
+    public void testBeanFactoryV91() {
+        // 初始化BeanFactory
+        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:springv4.xml");
+
+        applicationContext.registerShutdownHook();
+
+        // 获取Bean对象
+        Object bean1 = applicationContext.getBean("userService");
+        Object bean2 = applicationContext.getBean("userService");
+        System.out.println(bean1.hashCode());
+        System.out.println(bean2.hashCode());
+
+        /*
+        * 1635546341
+        1698156408
+        * */
+
+        // 证明: prototype是生效的!!
+    }
+
+    /**
+     * 测试爱丽对象
+     */
+    @Test
+    public void testBeanFactoryV92() {
+        // 初始化BeanFactory
+        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:springv4.xml");
+
+        applicationContext.registerShutdownHook();
+
+        // 获取Bean对象
+        Object bean = applicationContext.getBean("userService");
+        System.out.println(((UserService) bean).queryUserInfo());
+
+        /*
+        被代理了,alibaba,Modify to shanghai.
+        * */
+
+        // 证明: ProxyBeanFactory取代了原来的UserDao， 通过动态代理完成对UserDao的封装
+        // 将接口的定义注册到Bean的属性中， 完成对复杂对象的代理
+    }
+
 }

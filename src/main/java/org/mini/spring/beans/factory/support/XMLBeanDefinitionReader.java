@@ -114,6 +114,12 @@ public class XMLBeanDefinitionReader extends AbstractBeanDefinitionReader {
                 beanDefinition.setDestroyMethodName(destroyMethod);
             }
 
+            // scope
+            String scope = bean.getAttribute("scope");
+            if(StrUtil.isNotBlank(scope)){
+                beanDefinition.setScope(scope);
+            }
+
 
             // 读取属性并完成属性定义
             NodeList cn = item.getChildNodes();

@@ -1,6 +1,7 @@
 package org.mini.spring.beans.factory.config;
 
 import org.mini.spring.beans.PropertyValues;
+import org.mini.spring.beans.factory.ConfigurableListenableBeanFactory;
 
 /**
  * <p>
@@ -16,6 +17,9 @@ import org.mini.spring.beans.PropertyValues;
  * @since 2023/5/15
  */
 public class BeanDefinition {
+
+    String SCOPE_SINGLETON = ConfigurableBeanFactory.SCOPE_SINGLETON;
+    String SCOPE_PROTOTYPE = ConfigurableBeanFactory.SCOPE_PROTOTYPE;
 
     private Class beanClass;
 
@@ -33,6 +37,17 @@ public class BeanDefinition {
      * 销毁方法名称
      */
     private String destroyMethodName;
+
+    /**
+     * 用于从spring.xml中解析到的Bean对象作用范围填充到属性中
+     */
+    private boolean singleton = true;
+
+    private boolean prototype = false;
+
+    private String scope = SCOPE_SINGLETON;
+
+
     public BeanDefinition(Class beanClass) {
         this.beanClass = beanClass;
         this.propertyValues = new PropertyValues();
@@ -73,5 +88,25 @@ public class BeanDefinition {
 
     public void setDestroyMethodName(String destroyMethodName) {
         this.destroyMethodName = destroyMethodName;
+    }
+
+    public boolean isSingleton() {
+        return SCOPE_SINGLETON.equals(scope);
+    }
+
+    public void setSingleton(boolean singleton) {
+        this.singleton = singleton;
+    }
+
+    public boolean isPrototype() {
+        return prototype;
+    }
+
+    public void setPrototype(boolean prototype) {
+        this.prototype = prototype;
+    }
+
+    public void setScope(String scope) {
+        this.scope = scope;
     }
 }

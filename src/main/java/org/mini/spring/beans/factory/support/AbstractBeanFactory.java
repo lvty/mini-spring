@@ -2,6 +2,7 @@ package org.mini.spring.beans.factory.support;
 
 import org.mini.spring.beans.BeansException;
 import org.mini.spring.beans.factory.BeanFactory;
+import org.mini.spring.beans.factory.FactoryBean;
 import org.mini.spring.beans.factory.config.BeanDefinition;
 import org.mini.spring.beans.factory.config.BeanPostProcessor;
 
@@ -17,7 +18,7 @@ import java.util.List;
  * @author pp
  * @since 2023/5/15
  */
-public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry implements BeanFactory {
+public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport implements BeanFactory {
 
     private final List<BeanPostProcessor> beanPostProcessors = new ArrayList<>();
 
@@ -27,6 +28,41 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
 
     public void addBeanPostProcessor(BeanPostProcessor beanPostProcessor) {
         beanPostProcessors.add(beanPostProcessor);
+    }
+
+    protected <T> T doGetBean(final String name, final Object[] args){
+        Object singleton = getSingleton(name);
+        if(null != singleton){
+            // 如果是FactoryBean， 则需要调用FactoryBean.getObject
+            return (T) getObjectForBeanInstance(singleton, name);
+        }
+
+        BeanDefinition beanDefinition = getBeanDefinition(name);
+        Object bean = createBean(name, beanDefinition, args);
+        return (T) getObjectForBeanInstance(bean, name);
+    }
+
+    /**
+     * 针对FactoryBean的操作:
+     *  获取到Bean之后， 都会判断一下是否是FactoryBean， 如果是， 那么会从FactoryBean中获取
+     *      先从缓存中获取， 如果能获取到， 那么直接返回；
+     *      否则， 如果是单例Bean， 那么创建完之后要放到缓存中去；
+     *              如果不是单例Bean， 直接调用FactoryBean去创建。
+     * @param bean
+     * @param name
+     * @return
+     */
+    private Object getObjectForBeanInstance(Object bean, String name) {
+        if(!(bean instanceof FactoryBean)){
+            return bean;
+        }
+
+        Object obj = getCachedObjectForFactoryBean(name);
+        if(obj == null){
+            FactoryBean<?> factoryBean = (FactoryBean<?>) bean;
+            obj = getObjectFromFactoryBean(factoryBean, name);
+        }
+        return obj;
     }
 
 
@@ -40,27 +76,30 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
     @Override
     public Object getBean(String name) throws BeansException {
 
-        // 获取单例实现
+        /*// 获取单例实现
         Object singleton = getSingleton(name);
         if (singleton != null) {
             return singleton;
         }
 
         BeanDefinition beanDefinition = getBeanDefinition(name);
-        return createBean(name, beanDefinition);
+        return createBean(name, beanDefinition);*/
+        return doGetBean(name, null);
     }
 
 
     @Override
     public Object getBean(String name, Object... args) throws BeansException {
-        // 获取单例实现
+        /*// 获取单例实现
         Object singleton = getSingleton(name);
         if (singleton != null) {
             return singleton;
         }
 
         BeanDefinition beanDefinition = getBeanDefinition(name);
-        return createBean(name, beanDefinition, args);
+        return createBean(name, beanDefinition, args);*/
+
+        return doGetBean(name, args);
     }
 
     /**

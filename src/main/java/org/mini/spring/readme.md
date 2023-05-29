@@ -95,7 +95,19 @@ XMLBeanDefinitionReader xmlBeanDefinitionReader = new XMLBeanDefinitionReader(be
 其实现能感知到容器中的相关对象
 - 这些获取方式怎么和Spring框架无缝衔接？
 
+### FactoryBean
+交给Spring管理的Bean对象一定是用户类创建出来的么？有没有可能通过定义接口， 然后具体的实现类是由Spring来管理的呢？
+- 在ORM框架中， 我们一般只会定义一个接口， 也并没有创建任何操作数据库的Bean对象， 但是这就可以完成对数据库的读取了。
+- 问题简化为： 如何完成把复杂且以代理方式将动态变化的对象注入到Spring容器呢。
+- 另外， 创建好的对象一定是单例的么？ 有木有可能是非单例的？
 
+以上问题就都可以通过FactoryBean来解决， 让使用者定义复杂的Bean对象， 且根据对象的类型(是否单例)来创建。
+- 对外提供一个可以从FactoryBean的getObject方法中获取对象的功能即可， 这样所有实现此接口的对象类， 就可以扩充自己的对象
+功能了。
+- MyBatis就实现了一个MapperFactoryBean类， 在getObject方法提供SqlSession执行CRUD的操作。
 
-
+思路：
+createBean完成对象的创建、属性填充、依赖加载、前置处理、初始化方法处理、后置处理；最后可以加上一个判断当前对象是否是一个
+FactoryBean对象， 如果是的话， 就需要继续执行获取FactoryBean具体对象的getObject对象了， 整个getBean过程新增一个创建
+类型的判断， 用于确定是否使用内存来存放对象， 如果要存放到内存，就是单例；否则每次都要重新创建；
 
