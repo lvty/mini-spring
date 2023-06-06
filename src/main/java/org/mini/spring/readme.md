@@ -17,12 +17,16 @@
 - 从SingletonBeanRegistry中获取现存的Bean，获取不到则进行下一步
 - 定义抽象方法， 获取到BeanDefinition信息
 - 定义抽象方法， 根据BeanDefinition的信息创建具体的Bean
+- 根据获取到的Bean， 判断是否为FactoryBean， 如果是的话， 则调用FactoryBean的方法完成Bean的创建
 
 3) 针对上面的步骤， 考虑到类的职责细分:
 - AbstractAutowireCapableBeanFactory完成Bean的创建
 内部根据Bean创建的不同策略， 比如Cglib/构造器形式创建没有属性具体值的Bean
 创建Bean之后将Bean的属性信息赋值
 Note: 以上两个步骤均依赖BeanDefinition!!
+完成Bean的属性赋值之后， 判断是否是Aware接口， 如果是的话， 完成Aware信息的绑定；
+完成以上步骤之后， 执行BeanPostProcessorsBeforeInitialization和BeanPostProcessorsAfterInitialization
+在此期间，完成invokeInitMethod方法的处理(InitializingBean接口或者属性配置init-method)；
 
 - DefaultListenableBeanFactory完成BeanDefinition的获取
 实现了BeanDefinitionRegistry接口从注册中心获取， 来源可以是外部用户输入的， 也可以是后续的读取XML资源信息
