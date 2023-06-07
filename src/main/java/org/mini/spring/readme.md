@@ -78,10 +78,6 @@ XMLBeanDefinitionReader xmlBeanDefinitionReader = new XMLBeanDefinitionReader(be
 7) ClassPathXMLApplicationContext
 对外暴露的接口， 主要给出资源的路径即可
 
-
-
-
-
 ## 从扩展角度
 哪些地方可以完成对Bean对象的扩展机制？
 - BeanDefinition生成后是否可以支持动态的修改其定义， 而不是从原有的资源处定义后不可以再修改(不可变)
@@ -114,4 +110,15 @@ XMLBeanDefinitionReader xmlBeanDefinitionReader = new XMLBeanDefinitionReader(be
 createBean完成对象的创建、属性填充、依赖加载、前置处理、初始化方法处理、后置处理；最后可以加上一个判断当前对象是否是一个
 FactoryBean对象， 如果是的话， 就需要继续执行获取FactoryBean具体对象的getObject对象了， 整个getBean过程新增一个创建
 类型的判断， 用于确定是否使用内存来存放对象， 如果要存放到内存，就是单例；否则每次都要重新创建；
+
+### 容器事件以及时间监听器
+观察者模式：作为对象的一对多依赖关系， 当一个对象的状态变更时，将所有依赖于它的对象都同步通知一遍。
+Spring event事件监听功能：
+- 事件类：Event
+- 事件监听: Listener
+- 事件发布
+
+在Spring#AbstractApplicationContext#refresh()方法中， 便于完成事件初始化和注册事件监听器的操作。
+
+
 
