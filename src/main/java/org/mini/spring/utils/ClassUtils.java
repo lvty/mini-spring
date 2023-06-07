@@ -14,4 +14,8 @@ public class ClassUtils {
     public static ClassLoader getDefaultClassLoader() {
         return Thread.currentThread().getContextClassLoader();
     }
+
+    public static boolean isCglibProxyClass(String className) {
+        return (className != null && className.contains("$$"));
+    }
 }

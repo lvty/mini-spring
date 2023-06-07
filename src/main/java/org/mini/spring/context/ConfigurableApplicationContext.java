@@ -10,7 +10,7 @@ import org.mini.spring.beans.BeansException;
  * @author pp
  * @since 2023/5/18
  */
-public interface ConfigurableApplicationContext extends ApplicationContext{
+public interface ConfigurableApplicationContext extends ApplicationContext, ApplicationEventPublisher {
 
     /**
      * 完成容器的刷新动作

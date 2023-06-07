@@ -4,7 +4,14 @@ import org.mini.spring.beans.BeansException;
 import org.mini.spring.beans.factory.ConfigurableListenableBeanFactory;
 import org.mini.spring.beans.factory.config.BeanFactoryPostProcessor;
 import org.mini.spring.beans.factory.config.BeanPostProcessor;
+import org.mini.spring.beans.factory.support.DefaultListableBeanFactory;
+import org.mini.spring.context.ApplicationEvent;
+import org.mini.spring.context.ApplicationEventPublisher;
+import org.mini.spring.context.ApplicationListener;
 import org.mini.spring.context.ConfigurableApplicationContext;
+import org.mini.spring.context.event.ApplicationEventMulticaster;
+import org.mini.spring.context.event.ContextClosedEvent;
+import org.mini.spring.context.event.SimpleApplicationEventMulticaster;
 import org.mini.spring.core.io.DefaultResourceLoader;
 
 import java.util.Map;
@@ -20,6 +27,10 @@ import java.util.Objects;
  */
 public abstract class AbstractApplicationContext extends DefaultResourceLoader
         implements ConfigurableApplicationContext {
+
+    public static final String APPLICATION_EVENT_MULTICASTER_BEAN_NAME = "applicationEventMulticaster";
+
+    private ApplicationEventMulticaster applicationEventMulticaster;
 
     @Override
     public void refresh() throws BeansException {
@@ -42,6 +53,56 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
         // 5. 提前实例化单例Bean对象
         beanFactory.preInstantiateSingletons();
+
+        // 6. 初始化事件发布者
+        initApplicationEventMulticaster();
+
+        // 7. 注册事件监听器
+        registerListeners();
+
+        // 8. 发布容器刷新完成事件
+        finishRefresh();
+    }
+
+    /**
+     * 完成事件发布， 其实质还是依赖广播器完成事件的分发
+     * @param applicationEvent
+     */
+    @Override
+    public void publishEvent(ApplicationEvent applicationEvent) {
+        applicationEventMulticaster.multicastEvent(applicationEvent);
+    }
+
+    private void finishRefresh() {
+        publishEvent(new ContextClosedEvent(this));
+    }
+
+    /**
+     * 获取全部的监听器类型，并加入到广播器中
+     */
+    private void registerListeners() {
+        /*Map beansOfType = getBeansOfType(ApplicationListener.class);
+        if (Objects.nonNull(beansOfType)) {
+            for (Object value : beansOfType.values()) {
+                applicationEventMulticaster.addApplicationListener((ApplicationListener) value);
+            }
+        }*/
+
+        // fixme: 此处要查找全部的Listener Bean
+        Object customEventListener = getBean("customEventListener");
+        applicationEventMulticaster.addApplicationListener((ApplicationListener) customEventListener);
+
+    }
+
+    /**
+     * 初始化一个简单的事件广播器
+     */
+    private void initApplicationEventMulticaster() {
+        ConfigurableListenableBeanFactory beanFactory = getBeanFactory();
+        applicationEventMulticaster = new SimpleApplicationEventMulticaster(beanFactory);
+
+        ((DefaultListableBeanFactory) beanFactory).
+                registerSingleton(APPLICATION_EVENT_MULTICASTER_BEAN_NAME, applicationEventMulticaster);
     }
 
     /**
@@ -84,6 +145,10 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
     @Override
     public void close() {
         try {
+            // 发布容器关闭事件
+            publishEvent(new ContextClosedEvent(this));
+
+            // 执行销毁Bean的方法
             getBeanFactory().destroySingletons();
         } catch (Exception ex) {
             throw new BeansException("ApplicationContext close error.", ex);

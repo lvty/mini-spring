@@ -6,6 +6,7 @@ import org.mini.spring.beans.factory.support.DefaultListableBeanFactory;
 import org.mini.spring.beans.factory.support.XMLBeanDefinitionReader;
 import org.mini.spring.beans.service.UserDao;
 import org.mini.spring.beans.service.UserService;
+import org.mini.spring.context.event.CustomEvent;
 import org.mini.spring.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -293,6 +294,19 @@ public class BeanFactoryTest {
 
         // 证明: ProxyBeanFactory取代了原来的UserDao， 通过动态代理完成对UserDao的封装
         // 将接口的定义注册到Bean的属性中， 完成对复杂对象的代理
+    }
+
+    /**
+     * 测试爱丽对象
+     */
+    @Test
+    public void testBeanFactoryV10() {
+        // 初始化BeanFactory
+        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:springv5.xml");
+        applicationContext.publishEvent(new CustomEvent(applicationContext, 1L, "hahahahh"));
+
+//        get msg: CustomEvent{id=1, msg='hahahahh'}
+
     }
 
 }
