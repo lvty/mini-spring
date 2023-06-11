@@ -120,5 +120,7 @@ Spring event事件监听功能：
 
 在Spring#AbstractApplicationContext#refresh()方法中， 便于完成事件初始化和注册事件监听器的操作。
 
-
+## 方法代理
+一个可以代理方法的Proxy，调用方法拦截器MethodInterceptor#invoke()，而不是Method#invoke()；
+另外，还需要对拦截表达式进行处理
 
