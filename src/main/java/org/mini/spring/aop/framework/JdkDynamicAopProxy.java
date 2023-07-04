@@ -1,7 +1,7 @@
 package org.mini.spring.aop.framework;
 
-import net.sf.cglib.proxy.MethodInterceptor;
 import org.mini.spring.aop.AdvisedSupport;
+import org.mini.spring.aop.intercept.MethodInterceptor;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -25,7 +25,10 @@ public class JdkDynamicAopProxy implements AopProxy, InvocationHandler {
     }
 
 
-    // 主要处理匹配的方法后，使用用户自定义的方法拦截器实现， 反射调用
+    /**
+     * 主要处理匹配的方法后，使用用户自定义的方法拦截器实现， 反射调用
+     * ReflectiveMethodInvocation: 给出的调用的方法的包装信息： 目标对象、方法、入参
+     */
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         if (advised.getMethodMatcher().matches(method, advised.getTargetSource().getTarget().getClass())) {
@@ -40,6 +43,10 @@ public class JdkDynamicAopProxy implements AopProxy, InvocationHandler {
         return method.invoke(advised.getTargetSource().getTarget(), args);
     }
 
+    /**
+     * 返回代理的对象
+     * @return
+     */
     @Override
     public Object getProxy() {
         return Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),

@@ -124,3 +124,23 @@ Spring event事件监听功能：
 一个可以代理方法的Proxy，调用方法拦截器MethodInterceptor#invoke()，而不是Method#invoke()；
 另外，还需要对拦截表达式进行处理
 
+在 Spring 框架中是一个非常重要的内容，使用 AOP 可以对业务逻辑的各个部分进行隔离，从而使各模块间的业务逻辑耦合度降低，
+提高代码的可复用性，同时也是为了提高开发效率。
+
+AOP的核心技术就是对动态代理的使用， 给出一个接口的实现类， 就可以使用代理的方式替换掉这个实现类。
+
+那么， 怎么给方法进行代理呢？怎么去代理所有符合某些规则的类方法呢？如果可以代理掉所有的类方法， 就可以做一个方法拦截器， 给
+所有被代理的方法添加上一些自定义的处理， 比如打印日志、记录耗时、监控异常等。
+
+就像你在使用 Spring 的 AOP 一样，只处理一些需要被拦截的方法。在拦截方法后，执行你对方法的扩展操作。
+- 那么我们就需要先来实现一个可以代理方法的 Proxy，其实代理方法主要是使用到
+**方法拦截器类**处理方法的调用 MethodInterceptor#invoke，而不是直接使用 invoke 方法中的入参 Method method 进行
+method.invoke(targetObj, args) ; 这块是整个使用时的差异。
+- 除了以上的核心功能实现，还需要使用到org.aspectj.weaver.tools.PointcutParser 处理拦截表达式
+"execution(*cn.springframework.test.bean.IUserService.*(..))"，有了方法代理和处理拦截，我们就可以完成设计出一个 AOP 的雏形了。
+
+![img.png](img.png)
+
+
+
+

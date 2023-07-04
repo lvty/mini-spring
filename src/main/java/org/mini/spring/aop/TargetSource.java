@@ -13,8 +13,12 @@ public class TargetSource {
 
     private Object target;
 
+    public TargetSource(Object target) {
+        this.target = target;
+    }
+
     public Class<?>[] getTargetClass() {
-        return new Class[]{target.getClass()};
+        return target.getClass().getInterfaces();
     }
 
 

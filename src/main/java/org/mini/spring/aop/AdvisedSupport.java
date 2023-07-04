@@ -1,6 +1,7 @@
 package org.mini.spring.aop;
 
-import net.sf.cglib.proxy.MethodInterceptor;
+
+import org.mini.spring.aop.intercept.MethodInterceptor;
 
 /**
  * <p>
@@ -23,7 +24,7 @@ public class AdvisedSupport {
     private MethodInterceptor methodInterceptor;
 
     /**
-     * 方法匹配器
+     * 方法匹配器： 这个对象由AspectJExpressionPointcut提供服务
      */
     private MethodMatcher methodMatcher;
 
