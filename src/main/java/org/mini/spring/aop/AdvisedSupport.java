@@ -28,6 +28,8 @@ public class AdvisedSupport {
      */
     private MethodMatcher methodMatcher;
 
+    private boolean proxyTargetClass;
+
     public TargetSource getTargetSource() {
         return targetSource;
     }
@@ -50,5 +52,13 @@ public class AdvisedSupport {
 
     public void setMethodMatcher(MethodMatcher methodMatcher) {
         this.methodMatcher = methodMatcher;
+    }
+
+    public void setProxyTargetClass(boolean proxyTargetClass) {
+        this.proxyTargetClass = proxyTargetClass;
+    }
+
+    public boolean isProxyTargetClass() {
+        return proxyTargetClass;
     }
 }

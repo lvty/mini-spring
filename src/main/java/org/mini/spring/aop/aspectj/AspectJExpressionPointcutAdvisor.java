@@ -3,9 +3,7 @@ package org.mini.spring.aop.aspectj;
 import org.aspectj.weaver.tools.PointcutExpression;
 import org.aspectj.weaver.tools.PointcutParser;
 import org.aspectj.weaver.tools.PointcutPrimitive;
-import org.mini.spring.aop.ClassFilter;
-import org.mini.spring.aop.MethodMatcher;
-import org.mini.spring.aop.Pointcut;
+import org.mini.spring.aop.*;
 
 import java.lang.reflect.Method;
 import java.util.HashSet;
@@ -13,65 +11,48 @@ import java.util.Set;
 
 /**
  * <p>
- *     只要依赖AspectJ组件并处理Pointcut/ClassFilter/MethodMatcher接口实现
- *     专门用于处理类和方法的匹配实现
+ *     把切面 pointcut、拦截方法 advice 和具体的拦截表达式包装在一起。这样就可以在 xml
+ * 的配置中定义一个 pointcutAdvisor 切面拦截器了。
  * </p>
  *
  * @author pp
  * @since 2023/6/11
  */
-public class AspectJExpressionPointcutAdvisor implements Pointcut, ClassFilter, MethodMatcher {
-
-    private static final Set<PointcutPrimitive> SUPPORTED_PRIMITIVES = new HashSet<>();
-
-    static {
-        SUPPORTED_PRIMITIVES.add(PointcutPrimitive.EXECUTION);
-
-        SUPPORTED_PRIMITIVES.add(PointcutPrimitive.ARGS);
-        SUPPORTED_PRIMITIVES.add(PointcutPrimitive.REFERENCE);
-        SUPPORTED_PRIMITIVES.add(PointcutPrimitive.THIS);
-        SUPPORTED_PRIMITIVES.add(PointcutPrimitive.TARGET);
-        SUPPORTED_PRIMITIVES.add(PointcutPrimitive.WITHIN);
-        SUPPORTED_PRIMITIVES.add(PointcutPrimitive.AT_ANNOTATION);
-        SUPPORTED_PRIMITIVES.add(PointcutPrimitive.AT_WITHIN);
-        SUPPORTED_PRIMITIVES.add(PointcutPrimitive.AT_ARGS);
-        SUPPORTED_PRIMITIVES.add(PointcutPrimitive.AT_TARGET);
-    }
-
-    private final PointcutExpression pointcutExpression;
-
-    public AspectJExpressionPointcutAdvisor(String expression) {
-        PointcutParser pointcutParser = initializePointcutParser(Thread.currentThread().getContextClassLoader());
-        pointcutExpression = pointcutParser.parsePointcutExpression(expression);
-    }
+public class AspectJExpressionPointcutAdvisor implements PointcutAdvisor {
 
     /**
-     * Initialize the underlying AspectJ pointcut parser.
+     * 切面
      */
-    private PointcutParser initializePointcutParser(ClassLoader classLoader) {
-        PointcutParser parser = PointcutParser
-                .getPointcutParserSupportingSpecifiedPrimitivesAndUsingSpecifiedClassLoaderForResolution(
-                        SUPPORTED_PRIMITIVES, classLoader);
-        return parser;
+    private AspectJExpressionPointcut pointcut;
+
+    /**
+     * 具体的拦截方法
+     */
+    private Advice advice;
+
+    /**
+     * 表达式
+     */
+    private String expression;
+
+    public void setExpression(String expression) {
+        this.expression = expression;
     }
 
     @Override
-    public boolean matches(Class<?> clazz) {
-        return pointcutExpression.couldMatchJoinPointsInType(clazz);
+    public Advice getAdvice() {
+        return advice;
     }
 
     @Override
-    public boolean matches(Method method, Class<?> targetClass) {
-        return pointcutExpression.matchesMethodExecution(method).alwaysMatches();
+    public Pointcut getPointcut() {
+        if(null == pointcut){
+            pointcut = new AspectJExpressionPointcut(expression);
+        }
+        return pointcut;
     }
 
-    @Override
-    public ClassFilter getClassFilter() {
-        return this;
-    }
-
-    @Override
-    public MethodMatcher getMethodMatcher() {
-        return this;
+    public void setAdvice(Advice advice) {
+        this.advice = advice;
     }
 }
