@@ -16,9 +16,9 @@ public interface MethodBeforeAdvice extends BeforeAdvice {
 
     /**
      * Callback before a given method is invoked.
-     * @param method
-     * @param args
-     * @param target
+     * @param method method being invoked
+     * @param args arguments to the method
+     * @param target target of the method invocation. May be null.
      * @throws Throwable
      */
     void before(Method method, Object[] args, Object target) throws Throwable;

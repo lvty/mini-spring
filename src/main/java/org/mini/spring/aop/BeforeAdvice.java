@@ -8,5 +8,5 @@ package org.mini.spring.aop;
  * @author Administrator
  * @since 2023/7/5
  */
-public interface BeforeAdvice extends Advice{
+public interface BeforeAdvice extends Advice {
 }

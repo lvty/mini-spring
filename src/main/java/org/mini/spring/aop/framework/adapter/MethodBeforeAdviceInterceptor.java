@@ -12,11 +12,11 @@ import org.mini.spring.aop.intercept.MethodInvocation;
  * @author Administrator
  * @since 2023/7/5
  */
-public class MethodBeforeAdviseInterceptor implements MethodInterceptor {
+public class MethodBeforeAdviceInterceptor implements MethodInterceptor {
 
     private MethodBeforeAdvice methodBeforeAdvice;
 
-    public MethodBeforeAdviseInterceptor(MethodBeforeAdvice methodBeforeAdvice) {
+    public MethodBeforeAdviceInterceptor(MethodBeforeAdvice methodBeforeAdvice) {
         this.methodBeforeAdvice = methodBeforeAdvice;
     }
 

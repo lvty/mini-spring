@@ -41,4 +41,9 @@ public class ReflectiveMethodInvocation implements MethodInvocation {
     public Object proceed() throws Throwable {
         return this.method.invoke(this.target, this.arguments);
     }
+
+    @Override
+    public Object getThis() {
+        return target;
+    }
 }

@@ -16,7 +16,14 @@ import java.util.Collection;
 
 /**
  * <p>
- *     TODO
+ *     从通过 beanFactory.getBeansOfType 获取 AspectJExpressionPointcutAdvisor 开始。
+ *
+ *     获取了 advisors 以后就可以遍历相应的 AspectJExpressionPointcutAdvisor 填充对
+ *     应的属性信息，包括：目标对象、拦截方法、匹配器，之后返回代理对象即可。
+ *
+ *     那么现在调用方获取到的这个 Bean 对象就是一个已经被切面注入的对象了，当调用方法的时候，
+ *     则会被按需拦截，处理用户需要的信息。
+ *
  * </p>
  *
  * @author Administrator
