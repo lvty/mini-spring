@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans>
+
+    <bean id="userService" class="org.mini.spring.aop.UService"/>
+
+    <bean class="org.mini.spring.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>
+
+    <bean id="beforeAdvice" class="org.mini.spring.aop.UserServiceBeforeAdvice"/>
+
+    <bean id="methodInterceptor" class="org.mini.spring.aop.framework.adapter.MethodBeforeAdviceInterceptor">
+        <property name="methodBeforeAdvice" ref="beforeAdvice"/>
+    </bean>
+
+    <bean id="pointcutAdvisor" class="org.mini.spring.aop.aspectj.AspectJExpressionPointcutAdvisor">
+        <property name="expression" value="execution(* org.mini.spring.aop.IUserService.*(..))"/>
+        <property name="advice" ref="methodInterceptor"/>
+    </bean>
+
+    <bean id="BeanFactoryPostProcessor" class="org.mini.spring.beans.factory.config.MyBeanFactoryPostProcessorTest"/>
+    <bean id="BeanPostProcessor" class="org.mini.spring.beans.factory.config.MyBeanPostProcessorTest"/>
+    <bean id="customEventListener" class="org.mini.spring.context.event.CustomEventListener"/>
+
+</beans>

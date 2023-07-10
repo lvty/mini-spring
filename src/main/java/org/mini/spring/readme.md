@@ -140,6 +140,7 @@ method.invoke(targetObj, args) ; 这块是整个使用时的差异。
 "execution(*cn.springframework.test.bean.IUserService.*(..))"，有了方法代理和处理拦截，我们就可以完成设计出一个 AOP 的雏形了。
 
 ![img.png](img.png)
+![img_3.png](img_3.png)
 
 拆解后总结：
 - 通过拆分后基本可以明确类职责划分情况，包括：代理目标对象属性、拦截器属性、方法匹配属性， 以及两种不同的代理操作JDK和CGlib的方式；
@@ -158,3 +159,5 @@ method.invoke(targetObj, args) ; 这块是整个使用时的差异。
 
 3) 这里还包括要解决方法拦截器的具体功能，提供一些 BeforeAdvice、 AfterAdvice的实现，让用户可以更简化的使用切面功能。
   除此之外还包括需要包装切面表达式以及拦截方法的整合，以及提供不同类型的代理方式的代理工厂，来包装我们的切面服务。
+
+![img_2.png](img_2.png)

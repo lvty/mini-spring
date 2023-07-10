@@ -6,6 +6,7 @@ import org.mini.spring.aop.framework.Cglib2AopProxy;
 import org.mini.spring.aop.framework.JdkDynamicAopProxy;
 import org.mini.spring.aop.intercept.MethodInterceptor;
 import org.mini.spring.aop.intercept.MethodInvocation;
+import org.mini.spring.context.support.ClassPathXmlApplicationContext;
 
 /**
  * <p>
@@ -50,5 +51,14 @@ public class UserServiceInterceptor implements MethodInterceptor {
 
         IUserService proxy1 = (IUserService) new Cglib2AopProxy(advisedSupport).getProxy();
         System.out.println(proxy1.queryUserInfo());
+    }
+
+    @Test
+    public void test_aop(){
+        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:springv10.xml");
+
+        IUserService service = (IUserService) applicationContext.getBean("userService");
+
+        System.out.println(service.queryUserInfo());
     }
 }
