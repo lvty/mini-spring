@@ -161,3 +161,37 @@ method.invoke(targetObj, args) ; 这块是整个使用时的差异。
   除此之外还包括需要包装切面表达式以及拦截方法的整合，以及提供不同类型的代理方式的代理工厂，来包装我们的切面服务。
 
 ![img_2.png](img_2.png)
+
+# 第二部分
+## 总结上面
+上面包含了Spring基本的IOC和AOP功能，但是配置化信息太多，能否进一步简化配置，简化使用呢？
+比如：　包的扫描注册、注解配置的使用、占位符属性的填充等等；
+
+### 自动扫描
+要完成Bean对象的注册是自动扫描完成的， 需要以下基本操作：
+扫描路径人口、XML解析扫描信息、待扫描Bean对象进行注解标记、扫描Class对象获取Bean注册的基本信息、组装注册信息、
+注册Bean对象;
+通过以上步骤就可以完成自定义注解和配置扫描路径的情况下， 完成Bean对象的注册； 除此之外， 可以完成配置属性中
+占位符特点给Bean注入属性信息。
+- 备注： 以上操作可以通过BeanFactoryPostProcessor, 可以处理所有的BeanDefinition加载完成后， 实例化Bean对象之前，
+提供修改BeanDefinition属性的机制。
+
+![img_4.png](img_4.png)
+结合 bean 的生命周期，包扫描只不过是扫描特定注解的类，提取类的相关信息组装成 BeanDefinition 注册到容器中。
+
+在 XmlBeanDefinitionReader 中解析<context:component-scan />标签，扫描类组装 BeanDefinition，
+然后注册到容器中的操作在 ClassPathBeanDefinitionScanner#doScan 中实现， 包含对类的扫描和获取注解信息等。
+
+- 自动扫描注册主要是扫描添加了自定义注解的类，在 xml 加载过程中提取类的信息，组装 BeanDefinition 注册到 Spring 容器中。
+- 关于 BeanFactoryPostProcessor 的使用，因为我们需  要完成对占位符配置信息的加载，所以需要使用到 
+BeanFactoryPostProcessor。在所有的 BeanDefinition 加载完成后，实例化 Bean 对象之前，修改BeanDefinition 的属性信息。
+
+
+![img_5.png](img_5.png)
+整个类的关系结构来看，其实涉及的内容并不多，主要包括的就是 xml 解析类
+XmlBeanDefinitionReader 对 ClassPathBeanDefinitionScanner#doScan 的使用。
+ 在 doScan 方法中处理所有指定路径下添加了注解的类，拆解出类的信息：名
+称、作用范围等，进行创建 BeanDefinition 好用于 Bean 对象的注册操作。
+ PropertyPlaceholderConfigurer 目前看上去像一块单独的内容，后续会把这块的内
+容与自动加载 Bean 对象进行整合，也就是可以在注解上使用占位符配置一些在配
+置文件里的属性信息。

@@ -66,6 +66,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
     /**
      * 完成事件发布， 其实质还是依赖广播器完成事件的分发
+     *
      * @param applicationEvent
      */
     @Override
@@ -116,30 +117,40 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
     private void invokeBeanFactoryPostProcessors(ConfigurableListenableBeanFactory beanFactory) {
         // todo 完善此处的注册方法
-        Object beanFactoryPostProcessor = beanFactory.getBean("BeanFactoryPostProcessor");
-        if (Objects.nonNull(beanFactoryPostProcessor)) {
-            ((BeanFactoryPostProcessor) beanFactoryPostProcessor).postProcessBeanFactory(beanFactory);
-        }
+        try {
+            Object beanFactoryPostProcessor = beanFactory.getBean("BeanFactoryPostProcessor");
+            if (Objects.nonNull(beanFactoryPostProcessor)) {
+                ((BeanFactoryPostProcessor) beanFactoryPostProcessor).postProcessBeanFactory(beanFactory);
+            }
         /*Map<String, BeanFactoryPostProcessor> beanFactoryPostProcessorMap =
                 beanFactory.getBeansOfType(BeanFactoryPostProcessor.class);
 
         for(BeanFactoryPostProcessor beanFactoryPostProcessor: beanFactoryPostProcessorMap.values()){
             beanFactoryPostProcessor.postProcessBeanFactory(beanFactory);
         }*/
+        } catch (Exception ex) {
+
+        }
+
     }
 
     private void registerBeanPostProcessors(ConfigurableListenableBeanFactory beanFactory) {
         // todo 完善此处的注册方法
-        Object beanFactoryPostProcessor = beanFactory.getBean("BeanPostProcessor");
-        if (Objects.nonNull(beanFactoryPostProcessor)) {
-            beanFactory.addBeanPostProcessor((BeanPostProcessor) beanFactoryPostProcessor);
-        }
+        try {
+            Object beanFactoryPostProcessor = beanFactory.getBean("BeanPostProcessor");
+            if (Objects.nonNull(beanFactoryPostProcessor)) {
+                beanFactory.addBeanPostProcessor((BeanPostProcessor) beanFactoryPostProcessor);
+            }
         /*Map<String, BeanPostProcessor> beanFactoryPostProcessorMap =
                 beanFactory.getBeansOfType(BeanPostProcessor.class);
 
         for(BeanPostProcessor beanPostProcessor: beanFactoryPostProcessorMap.values()){
             beanFactory.addBeanPostProcessor(beanPostProcessor);
         }*/
+        } catch (Exception ex) {
+
+        }
+
     }
 
     @Override

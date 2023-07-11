@@ -45,4 +45,9 @@ public abstract class AbstractRefreshableApplicationContext extends AbstractAppl
     public ConfigurableListenableBeanFactory getBeanFactory() {
         return beanFactory;
     }
+
+    @Override
+    public String[] getBeanDefinitionNames() {
+        return beanFactory.getBeanDefinitionNames();
+    }
 }

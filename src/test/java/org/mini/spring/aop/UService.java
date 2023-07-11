@@ -1,5 +1,7 @@
 package org.mini.spring.aop;
 
+import org.mini.spring.stereotype.Component;
+
 /**
  * <p>
  *     TODO
@@ -8,7 +10,10 @@ package org.mini.spring.aop;
  * @author Administrator
  * @since 2023/7/4
  */
+@Component("uService")
 public class UService implements IUserService {
+
+    private String token;
 
     public String queryUserInfo() {
         try {
@@ -16,7 +21,7 @@ public class UService implements IUserService {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        return "u1";
+        return "u1" + token;
     }
 
 
@@ -26,4 +31,11 @@ public class UService implements IUserService {
     }
 
 
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
 }

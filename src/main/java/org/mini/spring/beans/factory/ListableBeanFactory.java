@@ -14,6 +14,5 @@ public interface ListableBeanFactory<T> extends BeanFactory {
 
     Map<String, T> getBeansOfType(Class<T> type);
 
-    void getBeanDefinitionNames();
-
+    String[] getBeanDefinitionNames();
 }

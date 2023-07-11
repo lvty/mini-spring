@@ -6,6 +6,7 @@ import org.mini.spring.beans.BeansException;
 import org.mini.spring.beans.PropertyValue;
 import org.mini.spring.beans.factory.config.BeanDefinition;
 import org.mini.spring.beans.factory.config.BeanReference;
+import org.mini.spring.context.annotation.ClassPathBeanDefinitionScanner;
 import org.mini.spring.core.io.Resource;
 import org.mini.spring.core.io.ResourceLoader;
 import org.w3c.dom.Document;
@@ -78,6 +79,18 @@ public class XMLBeanDefinitionReader extends AbstractBeanDefinitionReader {
             // 非元素类型， 直接下一个
             if (!(item instanceof Element)) continue;
 
+            // 解析 context:component-scan 标签，扫描包中的类并提取相关信息，用于组装 BeanDefinition
+            if ("component-scan".equals(item.getNodeName())) {
+                Element componentScan = (Element) item;
+                String scanPath = componentScan.getAttribute("base-package");
+                if (StrUtil.isEmpty(scanPath)) {
+                    throw new BeansException("The value of base-package attribute can not be empty.");
+                }
+
+                scanPackage(scanPath);
+            }
+
+
             // 非Bean配置， 继续下一个
             if (!"bean".equals(item.getNodeName())) continue;
 
@@ -116,7 +129,7 @@ public class XMLBeanDefinitionReader extends AbstractBeanDefinitionReader {
 
             // scope
             String scope = bean.getAttribute("scope");
-            if(StrUtil.isNotBlank(scope)){
+            if (StrUtil.isNotBlank(scope)) {
                 beanDefinition.setScope(scope);
             }
 
@@ -152,6 +165,12 @@ public class XMLBeanDefinitionReader extends AbstractBeanDefinitionReader {
 
             getRegistry().registerBeanDefinition(beanName, beanDefinition);
         }
+    }
+
+    private void scanPackage(String scanPath) {
+        String[] basePackages = StrUtil.splitToArray(scanPath, ",");
+        ClassPathBeanDefinitionScanner scanner = new ClassPathBeanDefinitionScanner(getRegistry());
+        scanner.doScan(basePackages);
     }
 
     @Override
