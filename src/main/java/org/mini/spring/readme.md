@@ -195,3 +195,22 @@ XmlBeanDefinitionReader 对 ClassPathBeanDefinitionScanner#doScan 的使用。
  PropertyPlaceholderConfigurer 目前看上去像一块单独的内容，后续会把这块的内
 容与自动加载 Bean 对象进行整合，也就是可以在注解上使用占位符配置一些在配
 置文件里的属性信息。
+
+### 属性自动注入
+上面实现的功能可以完成自动扫描带有@Component的对象完成自动装配和注册Bean到Spring容器中，那么Bean配置中对应的属性
+怎么注入呢， 此时就需要使用@Autowired、@Value注解， 完成对属性和对象的注入。
+![img_6.png](img_6.png)
+
+围绕Bean的生命周期， 修改Bean的定义我们提供BeanFactoryPostProcessor，处理Bean的属性要用到BeanPostProcessor；
+
+要处理自动扫描注入，包括属性注入、对象注入，则需要在对象属性applyPropertyValues 填充之前 ，把属性信息写入到
+PropertyValues 的集合中去。这一步的操作相当于是解决了以前在 spring.xml 配置属性的过程。
+
+ 而在属性的读取中，需要依赖于对 Bean 对象的类中属性的配置了注解的扫描，field.getAnnotation(Value.class); 
+依次拿出符合的属性并填充上相应的配置信息。 这里有一点 ，属性的配置信息需要依赖于
+BeanFactoryPostProcessor 的实现类 PropertyPlaceholderConfigurer，把值写入到
+AbstractBeanFactory 的 embeddedValueResolvers 集合中，这样才能在属性填充中利用 beanFactory 获取相应的属性值
+
+ 还有一个是关于 @Autowired 对于对象的注入，其实这一个和属性注入的唯一区
+别是对于对象的获取 beanFactory.getBean(fieldType)，其他就没有什
+么差一点了。

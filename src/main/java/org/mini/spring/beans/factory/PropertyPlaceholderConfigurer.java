@@ -6,8 +6,10 @@ import org.mini.spring.beans.PropertyValue;
 import org.mini.spring.beans.PropertyValues;
 import org.mini.spring.beans.factory.config.BeanDefinition;
 import org.mini.spring.beans.factory.config.BeanFactoryPostProcessor;
+import org.mini.spring.beans.factory.support.DefaultListableBeanFactory;
 import org.mini.spring.core.io.DefaultResourceLoader;
 import org.mini.spring.core.io.Resource;
+import org.mini.spring.utils.StringValueResolver;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -77,6 +79,10 @@ public class PropertyPlaceholderConfigurer implements BeanFactoryPostProcessor {
                 }
             }
 
+            // 向容器中添加字符串解析器， 解析@value注解使用
+            ((DefaultListableBeanFactory)beanFactory)
+                    .addEmbeddedValueResolver(new PlaceholderResolvingStringValueResolver(properties));
+
         } catch (IOException e) {
             throw new BeansException("Could not load properties", e);
         }
@@ -86,5 +92,69 @@ public class PropertyPlaceholderConfigurer implements BeanFactoryPostProcessor {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    private class PlaceholderResolvingStringValueResolver implements StringValueResolver {
+
+        private final Properties properties;
+
+        public PlaceholderResolvingStringValueResolver(Properties properties) {
+            this.properties = properties;
+        }
+
+        @Override
+        public String resolveStringValue(String strVal) {
+            return PropertyPlaceholderConfigurer.this.resolvePlaceholder(strVal, properties);
+        }
+    }
+
+
+
+
+    /** Never check system properties. */
+    public static final int SYSTEM_PROPERTIES_MODE_NEVER = 0;
+
+    /**
+     * Check system properties if not resolvable in the specified properties.
+     * This is the default.
+     */
+    public static final int SYSTEM_PROPERTIES_MODE_FALLBACK = 1;
+
+    /**
+     * Check system properties first, before trying the specified properties.
+     * This allows system properties to override any other property source.
+     */
+    public static final int SYSTEM_PROPERTIES_MODE_OVERRIDE = 2;
+
+
+    protected String resolvePlaceholder(String placeholder, Properties props, int systemPropertiesMode) {
+        String propVal = null;
+        if (systemPropertiesMode == SYSTEM_PROPERTIES_MODE_OVERRIDE) {
+            propVal = resolveSystemProperty(placeholder);
+        }
+        if (propVal == null) {
+            propVal = resolvePlaceholder(placeholder, props);
+        }
+        if (propVal == null && systemPropertiesMode == SYSTEM_PROPERTIES_MODE_FALLBACK) {
+            propVal = resolveSystemProperty(placeholder);
+        }
+        return propVal;
+    }
+
+    protected String resolveSystemProperty(String key) {
+        try {
+            String value = System.getProperty(key);
+            if (value == null /*&& this.searchSystemEnvironment*/) {
+                value = System.getenv(key);
+            }
+            return value;
+        }
+        catch (Throwable ex) {
+            return null;
+        }
+    }
+
+    protected String resolvePlaceholder(String placeholder, Properties props) {
+        return props.getProperty(placeholder);
     }
 }

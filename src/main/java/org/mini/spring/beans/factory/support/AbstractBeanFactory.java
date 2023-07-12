@@ -5,6 +5,7 @@ import org.mini.spring.beans.factory.BeanFactory;
 import org.mini.spring.beans.factory.FactoryBean;
 import org.mini.spring.beans.factory.config.BeanDefinition;
 import org.mini.spring.beans.factory.config.BeanPostProcessor;
+import org.mini.spring.utils.StringValueResolver;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +23,8 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 
     private final List<BeanPostProcessor> beanPostProcessors = new ArrayList<>();
 
+    private final List<StringValueResolver> embeddedValueResolvers = new ArrayList<>();
+
     public List<BeanPostProcessor> getBeanPostProcessors() {
         return this.beanPostProcessors;
     }
@@ -29,6 +32,11 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
     public void addBeanPostProcessor(BeanPostProcessor beanPostProcessor) {
         beanPostProcessors.add(beanPostProcessor);
     }
+
+    public void addEmbeddedValueResolver(StringValueResolver stringValueResolver) {
+        embeddedValueResolvers.add(stringValueResolver);
+    }
+
 
     protected <T> T doGetBean(final String name, final Object[] args){
         Object singleton = getSingleton(name);
