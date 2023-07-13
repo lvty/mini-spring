@@ -1,5 +1,7 @@
 package org.mini.spring.beans.factory.config;
 
+import org.mini.spring.beans.PropertyValues;
+
 /**
  * <p>
  *     TODO
@@ -11,4 +13,6 @@ package org.mini.spring.beans.factory.config;
 public interface InstantiationAwareBeanPostProcessor extends BeanPostProcessor {
 
     Object postProcessBeforeInstantiation(Class<?> beanClass, String beanName);
+
+    PropertyValues postProcessPropertyValues(PropertyValues pvs, Object bean, String beanName);
 }

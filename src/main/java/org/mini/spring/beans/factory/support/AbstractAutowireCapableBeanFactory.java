@@ -6,10 +6,7 @@ import org.mini.spring.beans.BeansException;
 import org.mini.spring.beans.PropertyValue;
 import org.mini.spring.beans.PropertyValues;
 import org.mini.spring.beans.factory.*;
-import org.mini.spring.beans.factory.config.AutowireCapableBeanFactory;
-import org.mini.spring.beans.factory.config.BeanDefinition;
-import org.mini.spring.beans.factory.config.BeanPostProcessor;
-import org.mini.spring.beans.factory.config.BeanReference;
+import org.mini.spring.beans.factory.config.*;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -36,7 +33,15 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         try {
             // fixme: 此处只有无参构造才没有问题， 那么有参构造怎么实现?
 
+            // 判断是否返回代理Bean对象
+//            bean = resolveBeforeInstantiation(name, beanDefinition);
+//            if (null != bean) {
+//                return bean;
+//            }
+
             bean = beanDefinition.getBeanClass().newInstance();
+            // 在设置属性之前， 允许BeanPostProcessor修改属性值
+            applyBeanPostProcessorsBeforeApplyingPropertyValues(name, bean, beanDefinition);
 
             // 完成Bean的创建之后， 此处需要完成对象的属性填充，对象的属性包含基础类型和引用类型
             applyPropertyValues(name, bean, beanDefinition);
@@ -58,6 +63,27 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         return bean;
     }
 
+    /**
+     * 从集合中筛选出继承InstantiationAwareBeanPostProcessor接口的实现类， 循环调用方法设置属性值到BeanDefinition
+     * @param name
+     * @param bean
+     * @param beanDefinition
+     */
+    private void applyBeanPostProcessorsBeforeApplyingPropertyValues(String name, Object bean, BeanDefinition beanDefinition) {
+        for (BeanPostProcessor beanPostProcessor : getBeanPostProcessors()) {
+            if (beanPostProcessor instanceof InstantiationAwareBeanPostProcessor) {
+                PropertyValues propertyValues = ((InstantiationAwareBeanPostProcessor) beanPostProcessor)
+                        .postProcessPropertyValues(beanDefinition.getPropertyValues(), bean, name);
+
+                if (null != propertyValues) {
+                    for (PropertyValue propertyValue : propertyValues.getPropertyValues()) {
+                        beanDefinition.getPropertyValues().addPropertyValue(propertyValue);
+                    }
+                }
+            }
+        }
+    }
+
     @Override
     protected Object createBean(String name, BeanDefinition beanDefinition, Object[] args) throws BeansException {
         Object bean = null;
@@ -66,6 +92,9 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 
             // 完成Bean的创建之后， 此处需要完成对象的属性填充，对象的属性包含基础类型和引用类型
             applyPropertyValues(name, bean, beanDefinition);
+
+            // 在设置属性之前， 允许BeanPostProcessor修改属性值
+            applyBeanPostProcessorsBeforeApplyingPropertyValues(name, bean, beanDefinition);
 
             // 执行Bean的初始化方法和BeanPostProcessor的前置和后置处理方法
             bean = initializeBean(name, bean, beanDefinition);

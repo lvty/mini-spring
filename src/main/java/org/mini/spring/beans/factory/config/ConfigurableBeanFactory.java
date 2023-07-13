@@ -29,4 +29,6 @@ public interface ConfigurableBeanFactory extends HierarchicalBeanFactory {
      * 销毁方法
      */
     void destroySingletons() throws Exception;
+
+    String resolveEmbeddedValue(String value);
 }
