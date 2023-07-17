@@ -5,6 +5,7 @@ import org.mini.spring.beans.factory.BeanFactory;
 import org.mini.spring.beans.factory.FactoryBean;
 import org.mini.spring.beans.factory.config.BeanDefinition;
 import org.mini.spring.beans.factory.config.BeanPostProcessor;
+import org.mini.spring.beans.factory.config.ConfigurableBeanFactory;
 import org.mini.spring.utils.StringValueResolver;
 
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ import java.util.List;
  * @author pp
  * @since 2023/5/15
  */
-public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport implements BeanFactory {
+public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport implements ConfigurableBeanFactory {
 
     private final List<BeanPostProcessor> beanPostProcessors = new ArrayList<>();
 
@@ -136,6 +137,19 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
      */
     protected abstract BeanDefinition getBeanDefinition(String name) throws BeansException;
 
-
+    @Override
+    public String resolveEmbeddedValue(String value) {
+        if (value == null) {
+            return null;
+        }
+        String result = value;
+        for (StringValueResolver resolver : this.embeddedValueResolvers) {
+            result = resolver.resolveStringValue(result);
+            if (result == null) {
+                return null;
+            }
+        }
+        return result;
+    }
 
 }

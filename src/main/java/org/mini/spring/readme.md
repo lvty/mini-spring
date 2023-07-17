@@ -169,18 +169,17 @@ method.invoke(targetObj, args) ; 这块是整个使用时的差异。
 
 ### 自动扫描
 要完成Bean对象的注册是自动扫描完成的， 需要以下基本操作：
-扫描路径人口、XML解析扫描信息、待扫描Bean对象进行注解标记、扫描Class对象获取Bean注册的基本信息、组装注册信息、
-注册Bean对象;
+扫描路径入口、XML解析扫描信息、待扫描Bean对象进行注解标记、扫描Class对象获取Bean注册的基本信息、组装注册信息、注册Bean对象;
 通过以上步骤就可以完成自定义注解和配置扫描路径的情况下， 完成Bean对象的注册； 除此之外， 可以完成配置属性中
 占位符特点给Bean注入属性信息。
 - 备注： 以上操作可以通过BeanFactoryPostProcessor, 可以处理所有的BeanDefinition加载完成后， 实例化Bean对象之前，
 提供修改BeanDefinition属性的机制。
 
 ![img_4.png](img_4.png)
-结合 bean 的生命周期，包扫描只不过是扫描特定注解的类，提取类的相关信息组装成 BeanDefinition 注册到容器中。
+结合 bean 的生命周期，**包扫描只不过是扫描特定注解的类，提取类的相关信息组装成 BeanDefinition 注册到容器中**。
 
 在 XmlBeanDefinitionReader 中解析<context:component-scan />标签，扫描类组装 BeanDefinition，
-然后注册到容器中的操作在 ClassPathBeanDefinitionScanner#doScan 中实现， 包含对类的扫描和获取注解信息等。
+然后注册到容器中，具体操作在 ClassPathBeanDefinitionScanner#doScan 中实现， 包含对类的扫描和获取注解信息等。
 
 - 自动扫描注册主要是扫描添加了自定义注解的类，在 xml 加载过程中提取类的信息，组装 BeanDefinition 注册到 Spring 容器中。
 - 关于 BeanFactoryPostProcessor 的使用，因为我们需  要完成对占位符配置信息的加载，所以需要使用到 
@@ -212,5 +211,4 @@ BeanFactoryPostProcessor 的实现类 PropertyPlaceholderConfigurer，把值写�
 AbstractBeanFactory 的 embeddedValueResolvers 集合中，这样才能在属性填充中利用 beanFactory 获取相应的属性值
 
  还有一个是关于 @Autowired 对于对象的注入，其实这一个和属性注入的唯一区
-别是对于对象的获取 beanFactory.getBean(fieldType)，其他就没有什
-么差一点了。
+别是对于对象的获取 beanFactory.getBean(fieldType)。

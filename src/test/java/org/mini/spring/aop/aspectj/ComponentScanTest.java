@@ -2,6 +2,7 @@ package org.mini.spring.aop.aspectj;
 
 import org.junit.Test;
 import org.mini.spring.aop.UService;
+import org.mini.spring.aop.UserService;
 import org.mini.spring.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -23,5 +24,14 @@ public class ComponentScanTest {
         Object bean1 = applicationContext.getBean("uService");
         System.out.println(((UService) bean).queryUserInfo());
         System.out.println(((UService) bean1).queryUserInfo());
+    }
+
+    @Test
+    public void testAutowire() {
+        ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("classpath:springv15.xml");
+
+        // 获取Bean对象
+        Object bean = applicationContext.getBean("userService");
+        System.out.println(((UserService) bean).queryUserInfo());
     }
 }

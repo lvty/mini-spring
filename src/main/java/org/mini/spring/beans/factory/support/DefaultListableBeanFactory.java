@@ -62,8 +62,5 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
         return this.beanDefinitionMap.keySet().toArray(new String[0]);
     }
 
-    @Override
-    public String resolveEmbeddedValue(String value) {
-        return null;
-    }
+
 }

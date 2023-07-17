@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans>
+
+    <component-scan base-package="org.mini.spring.aop"/>
+
+    <bean id="BeanFactoryPostProcessor" class="org.mini.spring.beans.factory.PropertyPlaceholderConfigurer">
+        <property name="location" value="classpath:token.properties"/>
+    </bean>
+
+<!--    <bean id="BeanFactoryPostProcessor" class="org.mini.spring.beans.factory.config.MyBeanFactoryPostProcessorTest"/>-->
+    <bean id="BeanPostProcessor" class="org.mini.spring.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor"/>
+    <bean id="customEventListener" class="org.mini.spring.context.event.CustomEventListener"/>
+
+</beans>

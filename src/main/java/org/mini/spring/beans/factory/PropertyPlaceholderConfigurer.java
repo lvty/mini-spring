@@ -79,7 +79,7 @@ public class PropertyPlaceholderConfigurer implements BeanFactoryPostProcessor {
                 }
             }
 
-            // 向容器中添加字符串解析器， 解析@value注解使用
+            // 向容器中添加字符串解析器， 动态解析@value注解使用
             ((DefaultListableBeanFactory)beanFactory)
                     .addEmbeddedValueResolver(new PlaceholderResolvingStringValueResolver(properties));
 
@@ -94,6 +94,17 @@ public class PropertyPlaceholderConfigurer implements BeanFactoryPostProcessor {
         this.location = location;
     }
 
+    private String replacePlaceholders(String strValue){
+        StringBuilder buffer = new StringBuilder(strValue);
+        int startIdx = buffer.indexOf(DEFAULT_PLACEHOLDER_PREFIX);
+        int stopIdx = buffer.lastIndexOf(DEFAULT_PLACEHOLDER_SUFFIX);
+
+        if (stopIdx != -1 && startIdx < stopIdx) {
+            return strValue.substring(startIdx + 2, stopIdx);
+        }
+        return strValue;
+    }
+
     private class PlaceholderResolvingStringValueResolver implements StringValueResolver {
 
         private final Properties properties;
@@ -104,7 +115,7 @@ public class PropertyPlaceholderConfigurer implements BeanFactoryPostProcessor {
 
         @Override
         public String resolveStringValue(String strVal) {
-            return PropertyPlaceholderConfigurer.this.resolvePlaceholder(strVal, properties);
+            return PropertyPlaceholderConfigurer.this.resolvePlaceholder(replacePlaceholders(strVal), properties);
         }
     }
 
